@@ -1,5 +1,5 @@
-var CLIENT_ID = '1002244286905-l6a8jm252nlkglbg36h23g9eoqjaat50.apps.googleusercontent.com';
-var API_KEY = 'AIzaSyCIYZca7MRL-p9nqqJxqTOHmGgODObHEIw';
+var CLIENT_ID = '';
+var API_KEY = '';
 var DISCOVERY_DOCS = ["https://slides.googleapis.com/$discovery/rest?version=v1"];
 var SCOPES = "https://www.googleapis.com/auth/presentations";
 var authorizeButton = document.getElementById('authorize_button');
