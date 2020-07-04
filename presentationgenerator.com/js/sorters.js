@@ -13,7 +13,7 @@ let slideDelay = 0;
 let currentPercent = 0;
 let text;
 
-String.prototype.divide = function() {
+String.prototype.createPresentation = function() {
     //HEADER = KEY, TEXT = VALUE [JQUERY DOM OBJECTS, NOT PLAIN TEXT]
     let texts2headers = new Map();
 
@@ -39,7 +39,12 @@ String.prototype.divide = function() {
     //GET HEADERS TO DIVIDE
 
     //DIVIDE HTML BY HEADERS INTO SLIDES
+    let firstParInserted = false;
     for (i = 0; i < headers.length; i++) {
+        if (!firstParInserted) {
+            texts2headers.set($("h1"), $(html).find("p:first:not(:empty)"));
+            firstParInserted = true;
+        }
         texts2headers.set(headers[i], $(headers[i]).nextUntil(headers[i + 1]));
     }
 
@@ -48,7 +53,7 @@ String.prototype.divide = function() {
         showArticle($(html));
     } else {
         //START MAIN PROCESS
-        createPresentation(texts2headers);
+        finalCreation(texts2headers);
     }
 }
 

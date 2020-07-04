@@ -8,6 +8,10 @@ const toRemove = ["External links", "Notes", "References", "See also", "Further 
 const progressBar = $(".progress-bar");
 const card = $(".pres-preview");
 
+let charperrow = 44;
+let charperrowH = 43;
+let smallHeaderLength = 21;
+
 
 const COLWIDTH = 315;
 let IMAGEHEIGHT;

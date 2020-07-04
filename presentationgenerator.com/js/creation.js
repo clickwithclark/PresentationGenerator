@@ -2,8 +2,9 @@ let imagePercent;
 let PRESENTATION_ID;
 let ImageCount; //size of imageMatrix (images taken from other artciles)
 let headingID, slideID, layoutType, currentImg, currentText, imageCof, headingText;
+let longheaders = [];
 
-function createPresentation(map) {
+function finalCreation(map) {
     let title = $("title").text();
     gapi.client.slides.presentations.create({
         title: title
@@ -11,14 +12,14 @@ function createPresentation(map) {
         pushProgress(10);
         PRESENTATION_ID = response.result.presentationId;
         updateFirstSlide();
-        let count = 1;
+        let slideOrder = 1;
         let requests = [];
         let imageMatrix = []; //for images from other articles
         for (let [head, v] of map) {
-            slideID = "presgen" + count;
-            headingID = "header" + count;
+            slideID = "presgen" + slideOrder;
+            headingID = "header" + slideOrder;
             headingText = $(head).text() + "";
-            textID = "text" + count;
+            textID = "text" + slideOrder;
             let ifcont = false;
             $.each(v, function(_, el) {
                 if ($(el).find(".gallery").length || $(el).hasClass("gallery")) {
@@ -27,8 +28,8 @@ function createPresentation(map) {
                         array.push(el);
                     }
                     $.each(array, function(_, gallery) {
-                        requests.push(galleryRequest(count, gallery, $(head).text()))
-                        count += slideDelay;
+                        requests.push(galleryRequest(slideOrder, gallery, $(head).text()))
+                        slideOrder += slideDelay;
                     })
                     ifcont = true;
                 }
@@ -40,7 +41,7 @@ function createPresentation(map) {
             requests.push({
                 "createSlide": {
                     "objectId": slideID,
-                    "insertionIndex": count,
+                    "insertionIndex": slideOrder,
                     "slideLayoutReference": {
                         "predefinedLayout": layoutType
                     },
@@ -58,9 +59,9 @@ function createPresentation(map) {
                     "text": headingText,
                 }
             });
-            count++;
+            slideOrder++;
 
-            if (headingText.length > 42)
+            if (headingText.length > charperrowH) {
                 requests.push({
                     "updatePageElementTransform": {
                         "objectId": headingID,
@@ -73,12 +74,20 @@ function createPresentation(map) {
                         "applyMode": "RELATIVE"
                     }
                 })
-                //2 TYPES OF IMAGES USED IN THE PRESENTATION:
-                //1. IMAGES DIRECTLY FROM THIS ARTICLE, COME IN HTML CODE FROM WIKI
-                //2. IMAGES TAKEN FROM OTHER ARTICLES, AS PARAGRAPH CORRSEPONDING TO THE SLIDE DOESN'T INCLUDE IMAGES
-                //IF PARAGRAPH LINKS TO OTHER ARTICLES => WE TAKE THEIR IMAGES
-                //EXAMPLE: (text from wiki) "JAVASCRIPT IS A PROGRAMMING LANGUAGE" WHERE "PROGRAMMING LANGUAGE" IS A LINK TO ANOTHER WIKI ARTCILE CALLED "PROGRAMMING LANGUAGE"
-                //WE SET IMAGES OF 2 TYPE AFTER PRESENTATION WAS CREATED, THAT WHY WE PUT INFO INTO imageMatrix TO EXECUTE REQUEST AFTERWARDS
+                longheaders.push(slideID);
+            } else if (headingText.length > smallHeaderLength) {
+                longheaders.push(slideID);
+            }
+            // longheaders.push(slideID);
+            // } else if (headingText.length > smallHeaderLength) {
+            //     // longheaders.push(slideID);
+            // }
+            //2 TYPES OF IMAGES USED IN THE PRESENTATION:
+            //1. IMAGES DIRECTLY FROM THIS ARTICLE, COME IN HTML CODE FROM WIKI
+            //2. IMAGES TAKEN FROM OTHER ARTICLES, AS PARAGRAPH CORRSEPONDING TO THE SLIDE DOESN'T INCLUDE IMAGES
+            //IF PARAGRAPH LINKS TO OTHER ARTICLES => WE TAKE THEIR IMAGES
+            //EXAMPLE: (text from wiki) "JAVASCRIPT IS A PROGRAMMING LANGUAGE" WHERE "PROGRAMMING LANGUAGE" IS A LINK TO ANOTHER WIKI ARTCILE CALLED "PROGRAMMING LANGUAGE"
+            //WE SET IMAGES OF 2 TYPE AFTER PRESENTATION WAS CREATED, THAT WHY WE PUT INFO INTO imageMatrix TO EXECUTE REQUEST AFTERWARDS
             if (layoutType == "TITLE_AND_TWO_COLUMNS") { //paste images
                 let arrayImages = $(v).find("a.image img");
                 let firstGo = true;
@@ -160,11 +169,10 @@ function createPresentation(map) {
                 pushProgress(60)
             }
         }).catch(function(error) {
-            console.log(requests[1][0]);
             showError(error.result.error.message);
         });
     }).catch(function(error) {
-        console.log(error)
+        console.log(error);
         showError(error.result.error.message);
     })
 }
@@ -203,7 +211,8 @@ function searchImagesPreview(array, linkIndex) {
         .then(function(response) {
             let key = Object.keys(response.query.pages)[0];
             if (response.query.pages[key].hasOwnProperty("thumbnail")) {
-                thumbnailObject = response.query.pages[key]["thumbnail"]
+                thumbnailObject = response.query.pages[key]["thumbnail"];
+
                 currentImg = resizeImage(thumbnailObject["source"]);
                 imageCof = thumbnailObject["height"] / thumbnailObject["width"]
                 if (checkURL(currentImg)) {
@@ -333,45 +342,50 @@ function updateImages1by1() {
 
 /*/////////////////////////////////////REQUEST CREATION METHODS//////////////////////////////////////////*/
 function imageRequest(slideID, imgUrl) {
+    let translateY = TRANSLATEY;
+    imageIndex++;
+    //PRIMARY SETTINGS
+    let imgCof = url2Text2Cof.get(imgUrl)[1]
     let width = COLWIDTH;
+    IMAGEHEIGHT = width - 50;
     let scaleX = 1;
     let scaleY = 1;
     let newReq = [];
     if (previewNotUpdated) {
         updatePreview(imgUrl);
-        notUpdated = false;
+        previewNotUpdated = false;
     }
-    imageIndex++;
 
-    IMAGEHEIGHT = width - 50;
-    if (imageCof <= 1) {
+    if (imgCof <= 1) {
         //width > height
-        IMAGEHEIGHT = imageCof * width;
+        IMAGEHEIGHT = imgCof * width;
     }
-
-    let actualHeight = IMAGEHEIGHT;
 
     //SET IMAGE DATA
     if (urlToHeightWidth.has(imgUrl)) {
-        scaleX = COLWIDTH / urlToHeightWidth.get(imgUrl)[1];
-        scaleY = IMAGEHEIGHT / urlToHeightWidth.get(imgUrl)[0];
         width = urlToHeightWidth.get(imgUrl)[1];
-        actualHeight = urlToHeightWidth.get(imgUrl)[0];
-        if (width > actualHeight) {
+        IMAGEHEIGHT = urlToHeightWidth.get(imgUrl)[0];
+
+        scaleX = COLWIDTH / width;
+        scaleY = (COLWIDTH - 50) / IMAGEHEIGHT;
+
+        //TO SAVE THE PROPORTION SCALEX = SCALEY
+        if (width > IMAGEHEIGHT) {
             scaleY = scaleX;
         } else {
             scaleX = scaleY;
         }
-        IMAGEHEIGHT = actualHeight * scaleY;
     }
 
     imagesUsed.push(imgUrl);
+    text = url2Text2Cof.get(imgUrl)[0];
 
-    //USE DATA
-    newReq.push(createImageJSON("image" + imageIndex, imgUrl, slideID, actualHeight, width, TRANSLATEY, TRANSLATEX, scaleX, scaleY));
+    if (!longheaders.includes(slideID)) {
+        translateY = (405 - IMAGEHEIGHT * scaleY - textHeight(text.length)) / 2;
+    }
+
+    newReq.push(createImageJSON("image" + imageIndex, imgUrl, slideID, IMAGEHEIGHT, width, translateY, TRANSLATEX, scaleX, scaleY));
     if (url2Text2Cof.has(imgUrl) && url2Text2Cof.get(imgUrl)[0]) {
-        text = url2Text2Cof.get(imgUrl)[0]
-        imageCof = url2Text2Cof.get(imgUrl)[1]
         let textID = slideID + "d";
         newReq.push([{
                 "updatePageElementTransform": {
@@ -379,8 +393,7 @@ function imageRequest(slideID, imgUrl) {
                     transform: {
                         scaleX: 1,
                         scaleY: 1,
-                        translateX: 0,
-                        translateY: IMAGEHEIGHT + 3,
+                        translateY: IMAGEHEIGHT * scaleY + translateY - TRANSLATEY,
                         unit: 'PT'
                     },
                     "applyMode": "RELATIVE"

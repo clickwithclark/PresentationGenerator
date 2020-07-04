@@ -28,7 +28,7 @@ function getWikiArticle() {
         .then(function(response) { return response.json() })
         .then(function(response) {
             if (response.error == undefined) {
-                response.parse.text["*"].divide();
+                response.parse.text["*"].createPresentation();
             } else {
                 showError(response.error.info)
             }

@@ -125,7 +125,7 @@ while ($row = mysqli_fetch_array($result)) {
   </div>
 </div>
 
-    <?php include_once("footer.php"); ?>
+<?php include_once("footer.php"); ?>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
@@ -133,6 +133,8 @@ while ($row = mysqli_fetch_array($result)) {
     </script>
     <script src="js/variables.js"></script>
     <script src="js/basicfunctions.js"></script>
+    <script src="js/images.js"></script>
+    <script src="js/texts.js"></script>
     <script src="js/googlejson.js"></script>
     <script src="js/sorters.js"></script>
     <script src="js/infogetters.js"></script>
