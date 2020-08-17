@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="How to use presentation generator.">
-    <meta property="og:image" content="https://presentationgenerator.com/images/logoshare.png">
-    <title>How to generate presentation? - Presentation Generator</title>
+    <meta name="description" content="Как пользоваться генератором презентаций.">
+    <meta property="og:image" content="https://presentationgenerator.ru/images/logoshare.png">
+    <title>Как сгенерировать презентацию? - Генератор Презентаций</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
         integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
@@ -28,7 +28,7 @@
                     <a class="nav-link" href="powerpoint.php">PowerPoint | PDF</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="tutorial.php">Tutorial</a>
+                    <a class="nav-link" href="tutorial.php">Обучение</a>
                 </li>
             </ul>
         </div>
@@ -36,11 +36,10 @@
 
     <section class="container py-3">
         <div class="w-100 ">
-            <h1 class="text-center">How to generate a presentation?</h1>
-            <div class="google-slides-container">
-                <iframe id="ytplayer" type="text/html" width="100%" height="360"
-                    src="https://www.youtube.com/embed/FOWWoHXyK6M?autoplay=1&" frameborder="0"></iframe>
-            </div>
+            <h2 class="text-center">Что делать, если не нашёл свою тему?</h2>
+            <p>Попробуйте собрать вашу презентацию из нескольких. Например, в Википедии нет статьи "Моря Тихого океана".
+                Но есть статья "Тихий океан" и статьи по каждому морю. Сгенерируйте несколько презентаций, отберите
+                нужные слайды и соедините. Это всё равно быстрее, чем делать все с нуля.</p>
         </div>
     </section>
 
