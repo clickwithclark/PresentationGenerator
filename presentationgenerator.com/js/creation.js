@@ -1,11 +1,11 @@
 let imagePercent;
-let PRESENTATION_ID;
+var PRESENTATION_ID;
 let ImageCount; //size of imageMatrix (images taken from other artciles)
 let headingID, slideID, layoutType, currentImg, currentText, imageCof, headingText;
 let longheaders = [];
 
 function finalCreation(map) {
-    let title = $("title").text();
+    let title = $("h1").text() + " | " + translation.get("name");
     gapi.client.slides.presentations.create({
         title: title
     }).then((response) => {
@@ -352,7 +352,7 @@ function imageRequest(slideID, imgUrl) {
     let scaleY = 1;
     let newReq = [];
     if (previewNotUpdated) {
-        updatePreview(imgUrl);
+        updatePreview(imgUrl, imageCof);
         previewNotUpdated = false;
     }
 
@@ -428,7 +428,7 @@ function updateFirstSlide() {
         requests: [{
             "insertText": {
                 "objectId": "i0",
-                "text": $(".card-title").text(),
+                "text": $("h1").text()
             }
         }, {
             "insertText": {
@@ -450,13 +450,19 @@ function pushProgress(percent) {
         progressBar.text(translation.get("insertImages"))
     }
     if (currentPercent > 99) {
-        //PRESENTATION IS READY ;)
+        //PRESENTATION IS READY)
+
+        gapi.client.drive.permissions.create({
+            "fileId": PRESENTATION_ID,
+            "role": "reader",
+            "type": "anyone",
+            "allowFileDiscovery": true
+        }).then(function() {
+            updateLinks(PRESENTATION_ID)
+        });
+
         progressBar.text(translation.get("done"))
         $(".progress").fadeOut();
-        $(".pres-preview a").attr("href", "https://docs.google.com/presentation/d/" + PRESENTATION_ID)
-
-        card.show();
-        $("h2").text(translation.get("presReady"));
     }
     progressBar.css("width", currentPercent + "%")
 }

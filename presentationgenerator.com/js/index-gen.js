@@ -1,17 +1,33 @@
-let imageUrl = resizeImage($(".pres-preview img").attr("src"), $(window).width())
-$(".pres-preview img").attr("src", resizeImage(imageUrl, $(".pres-preview").width()))
-
 $(".navbar-icon").on('click', function() {
     $(this).toggleClass('active');
     $(this).toggleClass('not-active');
 });
 
 $("#submitError").click(function() {
-    $.ajax({
-        url: "db.php?",
-        data: "errortitle=" + $("#title").text() + "&error=" + $("#error-description").val(),
-        type: "POST"
-    });
-    $(this).hide();
-    $(".modal-body").empty().append("<p>Thank you for reporting! We will do our best to fix that!</p>")
+    if ($("#error-description").val().length > 0) {
+        $.ajax({
+            url: "db.php?",
+            data: "errortitle=" + $("#title").text() + "&error=" + $("#error-description").val(),
+            type: "POST"
+        });
+        $(this).hide();
+        $("#errorModal .modal-body").empty().append("<p>" + translation.get("thankyou") + "</p>")
+    }
+})
+
+$("#sendEmail").click(function() {
+    if ($("#email").val().length > 0) {
+        $.ajax({
+            url: "db.php?",
+            data: "send=" + $("#email").val() +
+                "&pptx=" + linksArray[0] +
+                "&gslide=" + linksArray[1] +
+                "&pdf=" + linksArray[2] +
+                "&txt=" + linksArray[3] +
+                "&odp=" + linksArray[4],
+            type: "POST"
+        });
+        $(this).hide();
+        $("#emailModal .modal-body").empty().append("<p>" + translation.get("emailSent") + "</p>")
+    }
 })

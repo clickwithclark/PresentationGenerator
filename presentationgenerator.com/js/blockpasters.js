@@ -1,12 +1,12 @@
 function pasteSuggestionsInBlock(response) {
     $(".suggestions").empty();
     if (response.length > 0) {
-        $("h1").text("Choose article:")
+        $("h1").text("Выберите статью:")
         $.map(response, function(val, i) {
             $(".suggestions").append('<div class="list-group-item list-group-item-action suggestion" data-title="' + val.title.replace(/ /ig, "_") + '"><div class="d-flex w-100 justify-content-between"><h5 class="mb-1">' + val.title + '</h5></div><p class="mb-1">' + val.snippet + '</p></div>');
         })
     } else {
-        $("h1").text("No articles found :(")
+        $("h1").text("Статей нет :(")
     }
 }
 

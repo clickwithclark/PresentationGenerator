@@ -1,20 +1,5 @@
-function resizeImage(url, size) {
-    if (!url) {
-        return;
-    }
-    let matches = url.match("[0-9]+px");
-    if (matches) {
-        if (size) {
-            url = url.replace(matches[0], size + "px");
-        } else {
-            url = url.replace(matches[0], "500px");
-        }
-    }
-    return url;
-
-}
-
-function getWikiArticle() {
+function startPresentationGeneration() {
+    $(".progress").fadeIn()
     let url = SERVICEURL;
     var params = {
         origin: "*",
@@ -50,7 +35,7 @@ function listArticles(fun) {
         .then(function(response) {
             fun(response[1]);
         })
-        .catch(function(error) {});
+        .catch(function(error) { console.log(error); });
 }
 
 function listFullArticles(fun) {
